@@ -1,3 +1,4 @@
+require 'azure/storage'
 require 'azure/storage/blob'
 require 'azure/storage/common'
 
