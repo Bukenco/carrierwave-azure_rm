@@ -15,17 +15,17 @@ module CarrierWave
 
       def connection
         @connection ||= begin
-          %i(storage_account_name storage_access_key storage_blob_host).each do |key|
-            ::Azure::Storage.send("#{key}=", uploader.send("azure_#{key}"))
-          end
-          ::Azure::Storage::Blob::BlobService.new
-        end
+                          %i(storage_account_name storage_access_key storage_blob_host).each do |key|
+                            ::Azure::Storage.send("#{key}=", uploader.send("azure_#{key}"))
+                          end
+                          ::Azure::Storage::Blob::BlobService.new
+                        end
       end
 
       def signer
         @signer ||= begin
-          ::Azure::Storage::Core::Auth::SharedAccessSignature.new
-        end
+                      ::Azure::Storage::Core::Auth::SharedAccessSignature.new
+                    end
       end
 
       class File
@@ -73,8 +73,10 @@ module CarrierWave
         end
 
         def url(options = {})
-          path = ::File.join @uploader.azure_container, @path
-          if @uploader.asset_host
+          if @uploader.azure_cdn_host
+            "#{@uploader.azure_cdn_host}/#{@path}"
+          elsif @uploader.asset_host
+            path = ::File.join @uploader.azure_container, @path
             "#{@uploader.asset_host}/#{path}"
           else
             uri = @connection.generate_uri(path)
@@ -156,16 +158,16 @@ module CarrierWave
 
         def load_blob
           @blob = begin
-            @connection.get_blob_properties @uploader.azure_container, @path
-          rescue ::Azure::Core::Http::HTTPError
-          end
+                    @connection.get_blob_properties @uploader.azure_container, @path
+                  rescue ::Azure::Core::Http::HTTPError
+                  end
         end
 
         def load_content
           @blob, @content = begin
-            @connection.get_blob @uploader.azure_container, @path
-          rescue ::Azure::Core::Http::HTTPError
-          end
+                              @connection.get_blob @uploader.azure_container, @path
+                            rescue ::Azure::Core::Http::HTTPError
+                            end
         end
       end
     end
