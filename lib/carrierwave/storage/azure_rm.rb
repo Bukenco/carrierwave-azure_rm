@@ -1,5 +1,4 @@
-require 'azure/storage/file'
-require 'azure/storage/common'
+require 'azure/storage'
 
 module CarrierWave
   module Storage
