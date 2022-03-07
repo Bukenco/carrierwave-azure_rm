@@ -1,4 +1,4 @@
-require 'azure/storage/blob'
+require 'azure/storage/file'
 require 'azure/storage/common'
 
 module CarrierWave
@@ -16,13 +16,9 @@ module CarrierWave
 
       def connection
         @connection ||= begin
-                          # %i(storage_account_name storage_access_key storage_blob_host).each do |key|
-                          #
-                          #   ::Azure::Storage.send("#{key}=", uploader.send("azure_#{key}"))
-                          # end
-                          ::Azure::Storage::Blob::BlobService.create(storage_account_name: uploader.send("azure_storage_account_name"),
-                                                                     storage_access_key: uploader.send("azure_storage_access_key"),
-                                                                     storage_blob_host: uploader.send("azure_storage_blob_host"))
+                          %i(storage_account_name storage_access_key storage_blob_host).each do |key|
+                            ::Azure::Storage.send("#{key}=", uploader.send("azure_#{key}"))
+                          end
                           ::Azure::Storage::Blob::BlobService.new
                         end
       end
